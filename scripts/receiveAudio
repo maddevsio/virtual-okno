@@ -1,0 +1,1 @@
+gst-launch-1.0 -v udpsrc port=$AUDIO_PORT caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=$ALSA_OUT_DEV

@@ -1,0 +1,6 @@
+export RECEIVE_IP=
+export AUDIO_PORT=5003
+export VIDEO_PORT=5001
+export ALSA_OUT_DEV=hw:2
+export ALSA_IN_DEV=hw:1
+export VIDEO_DEV=/dev/video0
