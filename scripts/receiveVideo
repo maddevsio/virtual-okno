@@ -1,1 +1,2 @@
+source settings
 nc -l $VIDEO_PORT > video.stream | omxplayer -o hdmi video.stream
