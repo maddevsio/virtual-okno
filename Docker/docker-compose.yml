@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+  reciveVideo:
+    container_name: reciveVideo
+    command: bash -c 'rm -f video.stream  && mkfifo video.stream && nc   -l 5001 > video.stream | omxplayer -o hdmi video.stream'
+    image: marat2501/omxpalyer
+    restart: always
+    privileged: true
+    tty: true
+    environment:
+      - DISPLAY=:0
+    ports:
+      - 5001:5001
+    devices:
+      - "/dev/vchiq:/dev/vchiq"
+      #- "/dev/fb0:/dev/fb0"
+
+  sendVideo:
+    container_name: sendVideo
+    command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc  192.168.20.49 5001'
+    image: marat2501/gstreamer
+    restart: always
+    privileged: true
+    tty: true
+    environment:
+      - DISPLAY=:0
+    devices:
+      - "/dev/video0:/dev/video0"
+
+  reciveAudio:
+    container_name: reciveAudio
+    command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=hw:0,0
+    image: marat2501/gstreamer
+    restart: always
+    privileged: true
+    tty: true
+    environment:
+      - DISPLAY=:0
+    ports:
+      - 5003:5003/udp
+    devices:
+      - "/dev/snd:/dev/snd"
+
+  sendAudio:
+    container_name: sendAudio
+    command: gst-launch-1.0 -v alsasrc device=hw:1 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=192.168.20.49 port=5003
+    image: marat2501/gstreamer
+    restart: always
+    privileged: true
+    tty: true
+    environment:
+      - DISPLAY=:0
+    devices:
+      - "/dev/snd:/dev/snd"
