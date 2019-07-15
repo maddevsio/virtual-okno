@@ -1,6 +1,6 @@
-# Raspberry Pi 3 B+ streaming
+# Raspberry Pi streaming
 
-# Hardware
+## Hardware
 
 Hardware to use:
 * Raspberry Pi 3 B+
@@ -17,7 +17,7 @@ Hardware to use:
 
 Why we use Logitech C920? This webcam can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. Raspberry Pi can decode H.264 stream to display on screen.
 
-# Preparation
+## Preparation
 
 *Warning! To prevent damage, microSD card should been inserted into a slot after board installation into a case.*
 
@@ -93,7 +93,7 @@ To configure Raspberry (keyboard layout, time zone, etc) use:
 
 ```sudo raspi-config```
 
-# Camera
+## Camera
 
 Install GStreamer:
 
@@ -157,7 +157,7 @@ ioctl: VIDIOC_ENUM_FMT
 ```
 
 
-# Using GStreamer for video
+## Using GStreamer for video
 
 A receiver should be started before a sender.
 
@@ -170,7 +170,7 @@ A receiver command:
 ```nc -l -u 5001 > video.stream | omxplayer -o hdmi video.stream```
 
 
-# Using GStreamer for audio
+## Using GStreamer for audio
 
 A receiver should be started before a sender.
 
@@ -183,7 +183,7 @@ A sender command:
 ```gst-launch-1.0 alsasrc device=hw:2 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=<receiverIP> port=4444```
 
 
-# Running Docker
+## Running Docker
 
 Install Docker:
 
