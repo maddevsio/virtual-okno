@@ -1,9 +1,8 @@
 version: '2'
 
 services:
-  reciveVideo:
+  receiveVideo:
     container_name: reciveVideo
-#    command: bash -c 'rm -f video.stream  && mkfifo video.stream && nc   -l 5001 > video.stream | omxplayer -o hdmi video.stream'
     command: bash -c 'rm -f video.stream  && mkfifo video.stream && nc -u -l 5001 > video.stream | omxplayer -o hdmi video.stream'
     image: marat2501/omxpalyer
     restart: always
@@ -19,7 +18,7 @@ services:
 
   sendVideo:
     container_name: sendVideo
-    command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -u ${RECEIVE_IP} 5001'
+    command: bash -c 'gst-launch-1.0 -v  v4l2src device=${VIDEO_DEV} ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -u ${RECEIVE_IP} 5001'
     image: marat2501/gstreamer
     restart: always
     privileged: true
@@ -29,7 +28,7 @@ services:
     devices:
       - "${VIDEO_DEV}:/dev/video0"
 
-  reciveAudio:
+  receiveAudio:
     container_name: reciveAudio
     command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=${ALSA_OUT_DEV}
     image: marat2501/gstreamer
