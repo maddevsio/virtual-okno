@@ -15,7 +15,7 @@ services:
 
   sendVideo:
     container_name: sendVideo
-    command: gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l 5001
+    command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l 5001'
     image: marat2501/gstreamer
     restart: always
     privileged: true
