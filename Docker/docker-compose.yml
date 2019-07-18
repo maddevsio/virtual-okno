@@ -2,7 +2,7 @@ version: '2'
 
 services:
   receiveVideo:
-    container_name: reciveVideo
+    container_name: receiveVideo
     command: bash -c 'omxplayer -o hdmi tcp://${RECEIVE_IP}:5001'
     image: marat2501/omxpalyer
     restart: always
@@ -28,7 +28,7 @@ services:
       - "${VIDEO_DEV}:/dev/video0"
 
   receiveAudio:
-    container_name: reciveAudio
+    container_name: receiveAudio
     command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=${ALSA_OUT_DEV}
     image: marat2501/gstreamer
     restart: always
