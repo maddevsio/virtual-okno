@@ -3,8 +3,20 @@ version: '2'
 services:
   receiveVideo:
     container_name: reciveVideo
-    command: bash -c 'rm -f video.stream  && mkfifo video.stream && nc -u -l 5001 > video.stream | omxplayer -o hdmi video.stream'
+    command: bash -c 'omxplayer -o hdmi tcp://${RECEIVE_IP}:5001'
     image: marat2501/omxpalyer
+    restart: always
+    privileged: true
+    tty: true
+    environment:
+      - DISPLAY=:0
+    devices:
+      - "/dev/vchiq:/dev/vchiq"
+
+  sendVideo:
+    container_name: sendVideo
+    command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l -k 5001'
+    image: marat2501/gstreamer
     restart: always
     privileged: true
     tty: true
@@ -12,19 +24,6 @@ services:
       - DISPLAY=:0
     ports:
       - ${VIDEO_PORT}:5001/tcp
-      - ${VIDEO_PORT}:5001/udp
-    devices:
-      - "/dev/vchiq:/dev/vchiq"
-
-  sendVideo:
-    container_name: sendVideo
-    command: bash -c 'gst-launch-1.0 -v  v4l2src device=${VIDEO_DEV} ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -u ${RECEIVE_IP} 5001'
-    image: marat2501/gstreamer
-    restart: always
-    privileged: true
-    tty: true
-    environment:
-      - DISPLAY=:0
     devices:
       - "${VIDEO_DEV}:/dev/video0"
 
