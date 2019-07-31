@@ -253,3 +253,10 @@ Run:
 To restart: 
 
 ```docker-compose restart restart```
+
+
+## To do
+
+* Connection via VPN
+* Remote management
+
