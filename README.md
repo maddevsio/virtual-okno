@@ -9,11 +9,8 @@ Hardware to use:
 * MicroSD card (16 GB, UHS-I recommended)
 * Power supply (2.5 A, 5 V DC, MicroUSB)
 * Logitech C920 webcam
-* USB sound adapter
 * TV or monitor
 * HDMI cable
-* Headset
-* Microphone
 
 Why we use Logitech C920? This webcam can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. Raspberry Pi can decode H.264 stream to display on screen.
 
