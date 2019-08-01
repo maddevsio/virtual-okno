@@ -169,15 +169,15 @@ A receiver command:
 
 ## Using GStreamer for audio
 
-A receiver should be started before a sender.
+A receiver should be started before a sender. Input audio device is webcam's microphone. Output audio device is TV set connected via HDMI.
 
 A receiver command:
 
-```gst-launch-1.0 udpsrc port=4444 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=hw:2```
+```gst-launch-1.0 udpsrc port=4444 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=hw:0,1```
 
 A sender command:
 
-```gst-launch-1.0 alsasrc device=hw:2 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=<receiverIP> port=4444```
+```gst-launch-1.0 alsasrc device=hw:1 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=<receiverIP> port=4444```
 
 
 ## Running Docker
