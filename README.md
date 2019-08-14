@@ -1,10 +1,23 @@
-# Raspberry Pi streaming
+# A solution to connect remote offices by video window using Raspberry Pi
 
-## Hardware
+### The idea
+
+Connect remote offices by permanent public video communication, like a window between rooms.
+
+### Concept
+
+People in remote offices need to communicate with each other not only in formal way using messengers, private or group chats, video calls, etc.
+Informal and casual communication is very important to make distributed team united. Video window let anybody just say hello or talk about weather, not about projects.
+
+This solution uses widespread hardware and open-source software.
+
+## Setting up and usage
+
+### Hardware
 
 Hardware to use:
 * Raspberry Pi 3 B+
-* Case
+* Case for Raspberry
 * Heatsinks
 * MicroSD card (16 GB, UHS-I recommended)
 * Power supply (2.5 A, 5 V DC, MicroUSB)
@@ -12,9 +25,9 @@ Hardware to use:
 * TV or monitor
 * HDMI cable
 
-Why we use Logitech C920? This webcam can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. Raspberry Pi can decode H.264 stream to display on screen.
+Why we use Logitech C920? This webcam can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. You can use other camera with the same capabilities. Raspberry Pi can decode H.264 stream to display on screen.
 
-## Preparation
+### Preparation
 
 *Warning! To prevent damage, microSD card should been inserted into a slot after board installation into a case.*
 
@@ -90,7 +103,103 @@ To configure Raspberry (keyboard layout, time zone, etc) use:
 
 ```sudo raspi-config```
 
-## Camera
+
+### Setting up Docker
+
+Install Docker:
+
+```sudo apt update && sudo apt upgrade -y```
+
+```curl -sSL https://get.docker.com | sh```
+
+Add user to a group:
+
+```sudo usermod -aG docker pi```
+
+After it, exit termintal and login again.
+
+Enable daemon:
+
+```sudo systemctl enable docker```
+
+Start daemon:
+
+```sudo systemctl start docker```
+
+Check if Docker installed correctly:
+
+```docker run hello-world```
+
+Install docker-compose:
+
+```sudo apt install python3-pip -y```
+
+```sudo pip3 install docker-compose```
+
+Check:
+
+```docker-compose --version```
+
+Set up a repository:
+
+```sudo apt install git```
+
+```git clone https://github.com/maddevsio/virtual-okno.git```
+
+```cd virtual-okno```
+
+Edit .env file:
+
+```nano Docker/.env```
+
+Sample content of .env:
+
+```
+RECEIVE_IP=<peerIP>
+AUDIO_PORT=5003
+VIDEO_PORT=5001
+ALSA_OUT_DEV=hw:2
+ALSA_IN_DEV=hw:1
+VIDEO_DEV=/dev/video0
+```
+
+```RECEIVE_IP``` is an IP address of another installation
+
+### Running Docker
+
+Run:
+
+```cd Docker```
+
+```docker-compose up -d```
+
+
+To restart: 
+
+```docker-compose restart restart```
+
+
+To restart certain container:
+
+```docker-compose restart restart <container-name>```
+
+where ```<container-name>``` are:
+
+* receiveVideo
+* sendVideo
+* receiveAudio
+* sendAudio
+
+To list running Docker containers:
+
+```docker ps```
+
+
+## Testing and troubleshooting
+
+Below are described how to run stream without Docker for testing and debugging purposes.
+
+### Camera
 
 Install GStreamer:
 
@@ -154,7 +263,7 @@ ioctl: VIDIOC_ENUM_FMT
 ```
 
 
-## Using GStreamer for video
+### Using GStreamer for video
 
 A receiver should be started before a sender.
 
@@ -167,7 +276,7 @@ A receiver command:
 ```nc -l -u 5001 > video.stream | omxplayer -o hdmi video.stream```
 
 
-## Using GStreamer for audio
+### Using GStreamer for audio
 
 A receiver should be started before a sender. Input audio device is webcam's microphone. Output audio device is TV set connected via HDMI.
 
@@ -179,77 +288,6 @@ A sender command:
 
 ```gst-launch-1.0 alsasrc device=hw:1 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=<receiverIP> port=4444```
 
-
-## Running Docker
-
-Install Docker:
-
-```sudo apt update && sudo apt upgrade -y```
-
-```curl -sSL https://get.docker.com | sh```
-
-Add user to a group:
-
-```sudo usermod -aG docker pi```
-
-After it, exit termintal and login again.
-
-Enable daemon:
-
-```sudo systemctl enable docker```
-
-Start daemon:
-
-```sudo systemctl start docker```
-
-Check if Docker installed correctly:
-
-```docker run hello-world```
-
-Install docker-compose:
-
-```sudo apt install python3-pip -y```
-
-```sudo pip3 install docker-compose```
-
-Check:
-
-```docker-compose --version```
-
-Set up a repository:
-
-```sudo apt install git```
-
-```git clone https://github.com/maddevsio/virtual-okno.git```
-
-```cd virtual-okno```
-
-Edit .env file:
-
-```nano Docker/.env```
-
-Sample content of .env:
-
-```
-RECEIVE_IP=<peerIP>
-AUDIO_PORT=5003
-VIDEO_PORT=5001
-ALSA_OUT_DEV=hw:2
-ALSA_IN_DEV=hw:1
-VIDEO_DEV=/dev/video0
-```
-
-```RECEIVE_IP``` is an IP address of another installation
-
-Run:
-
-```cd Docker```
-
-```docker-compose up -d```
-
-To restart: 
-
-```docker-compose restart restart```
 
 
 ## To do
