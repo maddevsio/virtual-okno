@@ -45,7 +45,8 @@ To enable Wi-Fi and SSH access at first boot add some modifications. On Linux ho
 
 and fill up it with the following:
 
-```ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 country=GB
 
@@ -164,6 +165,10 @@ VIDEO_DEV=/dev/video0
 ```
 
 ```RECEIVE_IP``` is an IP address of another installation
+
+```ALSA_OUT_DEV``` is audio output device. ```ALSA_IN_DEV``` is audio input device. ```VIDEO_DEV``` is webcam device. 
+
+For more information about the devices, refer to the "Troubleshooting" section below.
 
 ### Running Docker
 
