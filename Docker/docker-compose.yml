@@ -3,7 +3,7 @@ version: '2'
 services:
   receiveVideo:
     container_name: receiveVideo
-    command: bash -c 'omxplayer -o hdmi video.stream tcp://${RECEIVE_IP}:5001'
+    command: bash -c 'omxplayer -o hdmi tcp://${RECEIVE_IP}:5001'
     image: marat2501/omxpalyer
     restart: always
     privileged: true
