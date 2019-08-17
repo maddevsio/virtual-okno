@@ -1,15 +1,14 @@
-# A solution to connect remote offices by video window using Raspberry Pi
+# This solution gives opportunity to connect remote offices through video window using Raspberry Pi
 
 ### The idea
 
-Connect remote offices by permanent public video communication, like a window between rooms.
+Connect remote offices using cameras and screens on both ends, just like a window in a wall.
 
 ### Concept
 
-People in remote offices need to communicate with each other not only in formal way using messengers, private or group chats, video calls, etc.
-Informal and casual communication is very important to make distributed team united. Video window let anybody just say hello or talk about weather, not about projects.
+Colleagues from separate offices often want to be in touch with each other in informal way. The reason behind that is: everyday  conversations are genuinly important to keep remote teams together. Video window allows everyone to say hello to or have casual small-talks about the weather.
 
-This solution uses widespread hardware and open-source software.
+This solution uses affordable hardware and open-source software.
 
 ## Setting up and usage
 
@@ -25,25 +24,25 @@ Hardware to use:
 * TV or monitor
 * HDMI cable
 
-Why we use Logitech C920? This webcam can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. You can use other camera with the same capabilities. Raspberry Pi can decode H.264 stream to display on screen.
+Why do we use Logitech C920? Because it can get H.264-encoded 1080p/30fps stream, which can be transmitted without encoding/decoding. You can use other camera with the same capabilities. Raspberry Pi is capable to decode H.264 stream to display on the screen smoothly and without frame dropping.
 
 ### Preparation
 
-*Warning! To prevent damage, microSD card should been inserted into a slot after board installation into a case.*
+*Warning! To prevent damage, microSD card should be inserted into a slot after board installation into case.*
 
-The latest version of Raspbian and installation tutorial can be found at https://www.raspberrypi.org/downloads/raspbian/
+The latest version of Raspbian and installation tutorial can be found here https://www.raspberrypi.org/downloads/raspbian/
 
-*Note! We used the Stretch release, the latest Raspbian release is Buster, so we haven't tested the code on Buster yet.*
+*Note! In this project we used the Raspbian Stretch release, although the latest release of this distro is Buster. We haven't tested the code on Buster yet.*
 
-We used the [Lite](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip) variant of Raspbian installation. Unpack it and write to microSD card using a proper software in your OS.
+We used the [Lite](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip) version of Raspbian. Unpack it and write to microSD card using suitable software provided by your distribution.
 
-To enable Wi-Fi and SSH access at first boot add some modifications. On Linux host it would be the following:
+To enable Wi-Fi support and SSH access during the first boot you should make the following changes on your Linux host:
 
 ```touch /media/<username>/boot/ssh```
 
 ```nano /media/<username>/boot/wpa_supplicant.conf```
 
-and fill up it with the following:
+and insert the these lines:
 
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -71,20 +70,20 @@ network={
 }
 ```
 
-Complete documentation: https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/
+Click here for details on setting up your Wi-Fi: https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/
 
-It's better to use a monitor and a keyboard at the first boot. 
+It's better to use a monitor and a keyboard during the first boot. 
 
 Default user: pi
 
 Default password: raspberry
 
 
-After login let's change a password:
+After login let's change the password:
 
 ```sudo passwd pi```
 
-To check if the date has been updated:
+To check if the date is up to date:
 
 ```timedatectl```
 
@@ -96,11 +95,11 @@ Update firmware:
 
 ```sudo rpi-update```
 
-and reboot:
+Reboot:
 
 ```sudo reboot```
 
-To configure Raspberry (keyboard layout, time zone, etc) use:
+To configure Raspberry (keyboard layout, time zone, etc.) use:
 
 ```sudo raspi-config```
 
@@ -113,21 +112,21 @@ Install Docker:
 
 ```curl -sSL https://get.docker.com | sh```
 
-Add user to a group:
+Add user to the group 'docker':
 
 ```sudo usermod -aG docker pi```
 
-After it, exit termintal and login again.
+Then log out of the terminal and log in it again.
 
-Enable daemon:
+Enable docker daemon:
 
 ```sudo systemctl enable docker```
 
-Start daemon:
+Start the daemon:
 
 ```sudo systemctl start docker```
 
-Check if Docker installed correctly:
+Check if Docker is installed correctly:
 
 ```docker run hello-world```
 
@@ -137,11 +136,11 @@ Install docker-compose:
 
 ```sudo pip3 install docker-compose```
 
-Check:
+Make sure that docker-compose is installed properly:
 
 ```docker-compose --version```
 
-Set up a repository:
+Install git package, clone the repository and get into the virtual-okno directory:
 
 ```sudo apt install git```
 
@@ -164,9 +163,9 @@ ALSA_IN_DEV=hw:1
 VIDEO_DEV=/dev/video0
 ```
 
-```RECEIVE_IP``` is an IP address of another installation
+```RECEIVE_IP``` is an IP address of the other system
 
-```ALSA_OUT_DEV``` is audio output device. ```ALSA_IN_DEV``` is audio input device. ```VIDEO_DEV``` is webcam device. 
+```ALSA_OUT_DEV``` is an audio output device. ```ALSA_IN_DEV``` is an audio input device. ```VIDEO_DEV``` is a webcam device. 
 
 For more information about the devices, refer to the "Troubleshooting" section below.
 
@@ -184,7 +183,7 @@ To restart:
 ```docker-compose restart restart```
 
 
-To restart certain container:
+To restart a certain container:
 
 ```docker-compose restart restart <container-name>```
 
@@ -195,14 +194,14 @@ where ```<container-name>``` are:
 * receiveAudio
 * sendAudio
 
-To list running Docker containers:
+To list all running Docker containers:
 
 ```docker ps```
 
 
 ## Testing and troubleshooting
 
-Below are described how to run stream without Docker for testing and debugging purposes.
+Below it is described how to run stream without Docker for testing and debugging purposes.
 
 ### Camera
 
@@ -270,26 +269,26 @@ ioctl: VIDIOC_ENUM_FMT
 
 ### Using GStreamer for video
 
-A receiver should be started before a sender.
+The receiver should be started prior the transmitter.
 
-A sender command:
+Command to run the transmitter:
 
 ```gst-launch-1.0 v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -u <receiverIP> 5001```
 
-A receiver command:
+Command to run the receiver:
 
 ```nc -l -u 5001 > video.stream | omxplayer -o hdmi video.stream```
 
 
 ### Using GStreamer for audio
 
-A receiver should be started before a sender. Input audio device is webcam's microphone. Output audio device is TV set connected via HDMI.
+The receiver should be started before the transmitter. Input audio device is webcam's microphone. Output audio device is TV set connected via HDMI.
 
-A receiver command:
+Command to launch the receiver:
 
 ```gst-launch-1.0 udpsrc port=4444 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=hw:0,1```
 
-A sender command:
+Command to launch the transmitter:
 
 ```gst-launch-1.0 alsasrc device=hw:1 ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=<receiverIP> port=4444```
 
