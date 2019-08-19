@@ -10,6 +10,8 @@ Colleagues from separate offices often want to be in touch with each other in in
 
 This solution uses affordable hardware and open-source software.
 
+![Image of video window](https://github.com/maddevsio/virtual-okno/blob/master/img/okno_manas.jpg?raw=true)
+
 ## Setting up and usage
 
 ### Hardware
