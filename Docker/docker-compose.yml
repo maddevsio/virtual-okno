@@ -3,7 +3,7 @@ version: '2'
 services:
   receiveVideo:
     container_name: receiveVideo
-    command: bash -c 'rm -f video.stream  && mkfifo video.stream && nc ${RECEIVE_IP} 5001 > video.stream | omxplayer -o hdmi video.stream'
+    command: omxplayer -o hdmi tcp://${RECEIVE_IP}:5001
     image: marat2501/omxpalyer
     restart: always
     privileged: true
