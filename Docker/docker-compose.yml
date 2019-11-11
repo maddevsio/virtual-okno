@@ -10,6 +10,8 @@ services:
     tty: true
     environment:
       - DISPLAY=:0
+    volumes:
+      - "/opt/vc:/opt/vc"
     devices:
       - "/dev/vchiq:/dev/vchiq"
 
