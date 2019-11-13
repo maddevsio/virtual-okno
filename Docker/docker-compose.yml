@@ -19,7 +19,10 @@ services:
   vsender:
     container_name: vsender
     command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l 5001'
-    image: marat2501/gstreamer
+    build:
+      context: .
+      dockerfile: Dockerfile-gstreamer
+    image: gstreamer
     restart: always
     privileged: true
     tty: true
@@ -32,8 +35,11 @@ services:
 
   areceiver:
     container_name: areceiver
-    command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=${ALSA_OUT_DEV}
-    image: marat2501/gstreamer
+    command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink dev$
+    build:
+      context: .
+      dockerfile: Dockerfile-gstreamer
+    image: gstreamer
     restart: always
     privileged: true
     tty: true
@@ -47,7 +53,10 @@ services:
   asender:
     container_name: asender
     command: gst-launch-1.0 -v alsasrc device=${ALSA_IN_DEV} ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=${RECEIVE_IP} port=5003
-    image: marat2501/gstreamer
+    build:
+      context: .
+      dockerfile: Dockerfile-gstreamer
+    image: gstreamer
     restart: always
     privileged: true
     tty: true
@@ -55,3 +64,4 @@ services:
       - DISPLAY=:0
     devices:
       - "/dev/snd:/dev/snd"
+
