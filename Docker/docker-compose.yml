@@ -1,22 +1,23 @@
 version: '2'
 
 services:
-  receiveVideo:
-    container_name: receiveVideo
-    command: bash -c 'rm -f video.stream && mkfifo video.stream && nc ${RECEIVE_IP} 5001 > video.stream | omxplayer -o hdmi video.stream'
-    image: marat2501/omxpalyer
+  vreceiver:
+    container_name: vreceiver
+    command: omxplayer -o hdmi tcp://${RECEIVE_IP}:5001
+    build:
+      context: .
+      dockerfile: Dockerfile-omxplayer
+    image: omxplayer
     restart: always
     privileged: true
     tty: true
     environment:
       - DISPLAY=:0
-    volumes:
-      - "/opt/vc:/opt/vc"
     devices:
       - "/dev/vchiq:/dev/vchiq"
 
-  sendVideo:
-    container_name: sendVideo
+  vsender:
+    container_name: vsender
     command: bash -c 'gst-launch-1.0 -v  v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l 5001'
     image: marat2501/gstreamer
     restart: always
@@ -29,8 +30,8 @@ services:
     devices:
       - "${VIDEO_DEV}:/dev/video0"
 
-  receiveAudio:
-    container_name: receiveAudio
+  areceiver:
+    container_name: areceiver
     command: gst-launch-1.0 -v udpsrc port=5003 caps="application/x-rtp,channels=1" ! queue ! rtpjitterbuffer latency=100  ! rtpopusdepay ! opusdec plc=true ! queue ! audioconvert ! audioresample ! alsasink device=${ALSA_OUT_DEV}
     image: marat2501/gstreamer
     restart: always
@@ -43,8 +44,8 @@ services:
     devices:
       - "/dev/snd:/dev/snd"
 
-  sendAudio:
-    container_name: sendAudio
+  asender:
+    container_name: asender
     command: gst-launch-1.0 -v alsasrc device=${ALSA_IN_DEV} ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=${RECEIVE_IP} port=5003
     image: marat2501/gstreamer
     restart: always
