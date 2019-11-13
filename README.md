@@ -93,15 +93,7 @@ To check if the date is up to date:
 
 Install updates:
 
-```sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y```
-
-Update firmware:
-
-```sudo rpi-update```
-
-Reboot:
-
-```sudo reboot```
+```sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove```
 
 To configure Raspberry (keyboard layout, time zone, etc.) use:
 
@@ -112,7 +104,7 @@ To configure Raspberry (keyboard layout, time zone, etc.) use:
 
 Install Docker:
 
-```sudo apt update && sudo apt upgrade -y```
+```sudo apt update && sudo apt -y upgrade```
 
 ```curl -sSL https://get.docker.com | sh```
 
@@ -122,13 +114,13 @@ Add user to the group 'docker':
 
 Then log out of the terminal and log in it again.
 
-Enable docker daemon:
-
-```sudo systemctl enable docker```
-
 Start the daemon:
 
 ```sudo systemctl start docker```
+
+Enable docker daemon to run automatically:
+
+```sudo systemctl enable docker```
 
 Check if Docker is installed correctly:
 
@@ -136,7 +128,7 @@ Check if Docker is installed correctly:
 
 Install docker-compose:
 
-```sudo apt install python3-pip -y```
+```sudo apt install -y python3-pip```
 
 ```sudo pip3 install docker-compose```
 
@@ -146,15 +138,15 @@ Make sure that docker-compose is installed properly:
 
 Install git package, clone the repository and get into the virtual-okno directory:
 
-```sudo apt install git```
+```sudo apt install -y git```
 
 ```git clone https://github.com/maddevsio/virtual-okno.git```
 
-```cd virtual-okno```
+```cd virtual-okno/Docker```
 
-Edit .env file:
+Create a .env file:
 
-```nano Docker/.env```
+```nano .env```
 
 Sample content of .env:
 
@@ -162,7 +154,7 @@ Sample content of .env:
 RECEIVE_IP=<peerIP>
 AUDIO_PORT=5003
 VIDEO_PORT=5001
-ALSA_OUT_DEV=hw:2
+ALSA_OUT_DEV=hw:0,1
 ALSA_IN_DEV=hw:1
 VIDEO_DEV=/dev/video0
 ```
@@ -175,9 +167,9 @@ For more information about the devices, refer to the "Troubleshooting" section b
 
 ### Running Docker
 
-Run:
+Make sure that you are in virtual-okno/Docker directory.
 
-```cd Docker```
+Run:
 
 ```docker-compose up -d```
 
@@ -189,7 +181,7 @@ To restart:
 
 To restart a certain container:
 
-```docker-compose restart restart <container-name>```
+```docker-compose restart <container-name>```
 
 where ```<container-name>``` are:
 
@@ -207,11 +199,11 @@ To list all running Docker containers:
 
 Below it is described how to run stream without Docker for testing and debugging purposes.
 
-### Camera
-
 Install GStreamer:
 
-```sudo apt install gstreamer1.0-tools```
+```sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-alsa```
+
+### Camera
 
 List of cameras:
 
@@ -275,12 +267,15 @@ ioctl: VIDIOC_ENUM_FMT
 
 The receiver should be started prior the transmitter.
 
-Command to run the transmitter:
+Command to run the transmitter using TCP:
 
-```gst-launch-1.0 v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -u <receiverIP> 5001```
+```gst-launch-1.0 v4l2src device=/dev/video0 ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc -l 5001```
 
-Command to run the receiver:
+Command to run the receiver using TCP:
 
+```omxplayer -o hdmi tcp://<receiverIP>:5001```
+
+Alternative command:
 ```nc -l -u 5001 > video.stream | omxplayer -o hdmi video.stream```
 
 
