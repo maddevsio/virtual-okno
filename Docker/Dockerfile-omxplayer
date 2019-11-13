@@ -1,0 +1,9 @@
+FROM raspbian/stretch
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && apt-get upgrade -y && apt-get -y install omxplayer && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+CMD ["omxplayer"]
