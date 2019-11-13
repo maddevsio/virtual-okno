@@ -1,2 +1,0 @@
-source settings
-gst-launch-1.0 -v alsasrc device=$ALSA_IN_DEV ! queue ! audiorate ! audioconvert ! audioresample ! opusenc ! rtpopuspay ! udpsink host=$RECEIVE_IP port=$AUDIO_PORT

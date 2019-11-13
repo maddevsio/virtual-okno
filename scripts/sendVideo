@@ -1,2 +1,0 @@
-source settings
-gst-launch-1.0 v4l2src device=$VIDEO_DEV ! queue ! video/x-h264,width=1920,height=1080,framerate=24/1 ! fdsink | nc $RECEIVE_IP $VIDEO_PORT
