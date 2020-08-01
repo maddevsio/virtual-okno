@@ -38,7 +38,9 @@ The latest version of Raspbian and installation tutorial can be found here https
 
 *Note! In this project we used the Raspbian Stretch and Buster releases.*
 
-We used the [Lite](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2020-02-14/2020-02-13-raspbian-buster-lite.zip) version of Raspbian. Unpack it and write to microSD card using suitable software provided by your distribution.
+We used the [Lite](http://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-05-28/2020-05-27-raspios-buster-lite-armhf.zip) version of Raspbian. Unpack it and write to microSD card using suitable software provided by your distribution.
+
+### (Optional) Wi-Fi
 
 To enable Wi-Fi support and SSH access during the first boot you should make the following changes on your Linux host:
 
@@ -81,6 +83,8 @@ network={
 Click here for details on setting up your Wi-Fi: https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/
 
 It's better to use a monitor and a keyboard during the first boot. 
+
+### Basic settings
 
 Default user: pi
 
@@ -145,8 +149,6 @@ Make sure that docker-compose is installed properly:
 ```docker-compose --version```
 
 Clone the repository and get into the virtual-okno directory:
-
-```sudo apt install -y git```
 
 ```git clone https://github.com/maddevsio/virtual-okno.git```
 
